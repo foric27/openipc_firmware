@@ -24,28 +24,28 @@ insert_mmz() {
         insmod mmz.ko mmz=anonymous,0,$mmz_start,$mmz_size anony=1 || report_error
 }
 
-insert_detect() {
-        cd /lib/modules/4.9.37/hisilicon
-        insert_mmz
-        insmod hi_media.ko
-        insmod hi3516a_base.ko
-        insmod hi3516a_sys.ko vi_vpss_online=$b_arg_online sensor=unknown mem_total=$mem_total
-        insert_isp
-        insmod sensor_i2c.ko
-        insmod sensor_spi.ko
-        SENSOR=ar0230 insert_sns
-}
+# insert_detect() {
+        # cd /lib/modules/4.9.37/hisilicon
+        # insert_mmz
+        # insmod hi_media.ko
+        # insmod hi3516a_base.ko
+        # insmod hi3516a_sys.ko vi_vpss_online=$b_arg_online sensor=unknown mem_total=$mem_total
+        # insert_isp
+        # insmod sensor_i2c.ko
+        # insmod sensor_spi.ko
+        # SENSOR=ar0230 insert_sns
+# }
 
-remove_detect() {
-        rmmod -w sensor_spi
-        rmmod -w sensor_i2c
-        rmmod -w hi3516a_isp
-        rmmod -w hi3516a_sys
-        rmmod -w hi3516a_base
-        rmmod -w hi_media
-        rmmod -w mmz
-        rmmod -w sys_config
-}
+# remove_detect() {
+        # rmmod -w sensor_spi
+        # rmmod -w sensor_i2c
+        # rmmod -w hi3516a_isp
+        # rmmod -w hi3516a_sys
+        # rmmod -w hi3516a_base
+        # rmmod -w hi_media
+        # rmmod -w mmz
+        # rmmod -w sys_config
+# }
 
 insert_audio() {
         insmod acodec.ko
@@ -232,8 +232,7 @@ insert_sns() {
         ov4689)
                 devmem 0x200f0050 32 0x2     # i2c0_scl
                 devmem 0x200f0054 32 0x2     # i2c0_sda
-                #devmem 0x2003002c 32 0xE0007 # sensor unreset, clk 24MHz, VI 250MHz
-				devmem 0x2003002c 32 0x90007 # sensor unreset, clk 37.125MHz, VI 250MHz
+                devmem 0x2003002c 32 0xE0007 # sensor unreset, clk 24MHz, VI 250MHz
                 devmem 0x20030104 32 0x0	 # VI 250MHz
                 ;;
         ar0230 | ar0237 | sc4236)
@@ -439,41 +438,56 @@ calc_mmz_info
 
 #######################Action###############################
 
+# if [ $# -lt 1 ]; then
+        # load_usage
+        # exit 0
+# fi
+
+# # Sensor config
+# # SENSOR=${SENSOR:=imx307}
+# #
+
+# if [ -n "$SENSOR" ]; then
+        # logger -s -p daemon.info -t hisilicon "Manualy set SENSOR as ${SENSOR}"
+# else
+        # if fw_printenv -n sensor >/dev/null; then
+                # SENSOR_ENV=$(fw_printenv -n sensor)
+                # export SENSOR=${SENSOR_ENV}
+                # logger -s -p daemon.info -t hisilicon "Get data from environment and set SENSOR as ${SENSOR}"
+        # else
+                # insert_detect
+                # SENSOR_DETECT=$(ipcinfo --short-sensor)
+                # export SENSOR=${SENSOR_DETECT:=unknown}
+                # remove_detect
+                # logger -s -p daemon.info -t hisilicon "Get data from ipcinfo and set SENSOR as ${SENSOR}"
+                # fw_setenv sensor $SENSOR && logger -s -p daemon.info -t hisilicon "Write detected ${SENSOR} to U-Boot ENV"
+        # fi
+# fi
+
+# if [ $b_arg_remove -eq 1 ]; then
+        # remove_ko
+# fi
+
+# if [ "$SENSOR" = "unknown" ]; then
+        # exit 1
+# else
+        # if [ $b_arg_insmod -eq 1 ]; then
+                # cd /lib/modules/4.9.37/hisilicon
+                # insert_ko
+        # fi
+# fi
+
+
 if [ $# -lt 1 ]; then
-        load_usage
-        exit 0
-fi
-
-# Sensor config
-# SENSOR=${SENSOR:=imx307}
-#
-
-if [ -n "$SENSOR" ]; then
-        logger -s -p daemon.info -t hisilicon "Manualy set SENSOR as ${SENSOR}"
-else
-        if fw_printenv -n sensor >/dev/null; then
-                SENSOR_ENV=$(fw_printenv -n sensor)
-                export SENSOR=${SENSOR_ENV}
-                logger -s -p daemon.info -t hisilicon "Get data from environment and set SENSOR as ${SENSOR}"
-        else
-                insert_detect
-                SENSOR_DETECT=$(ipcinfo --short-sensor)
-                export SENSOR=${SENSOR_DETECT:=unknown}
-                remove_detect
-                logger -s -p daemon.info -t hisilicon "Get data from ipcinfo and set SENSOR as ${SENSOR}"
-                fw_setenv sensor $SENSOR && logger -s -p daemon.info -t hisilicon "Write detected ${SENSOR} to U-Boot ENV"
-        fi
+    load_usage;
+    exit 0;
 fi
 
 if [ $b_arg_remove -eq 1 ]; then
-        remove_ko
+	remove_ko;
 fi
 
-if [ "$SENSOR" = "unknown" ]; then
-        exit 1
-else
-        if [ $b_arg_insmod -eq 1 ]; then
-                cd /lib/modules/4.9.37/hisilicon
-                insert_ko
-        fi
+if [ $b_arg_insmod -eq 1 ]; then
+	cd /lib/modules/4.9.37/hisilicon
+	insert_ko;
 fi
