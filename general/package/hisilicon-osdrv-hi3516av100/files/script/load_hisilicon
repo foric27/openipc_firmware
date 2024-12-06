@@ -75,7 +75,7 @@ sys_config() {
 		#devmem 0x200300d8 32 0xa;           # ddrt
 
 		# -------------vi vpss online open
-		if [ $b_arg_online -eq 0 ]; then
+		if [ $b_arg_online -eq 1 ]; then
 			echo "==============vi_vpss_online==============";
 			devmem 0x20120004 32 0x40000000;			# online, SPI1 CS0
 			
