@@ -20,33 +20,6 @@ report_error() {
         exit 1
 }
 
-insert_mmz() {
-        insmod mmz.ko mmz=anonymous,0,$mmz_start,$mmz_size anony=1 || report_error
-}
-
-# insert_detect() {
-        # cd /lib/modules/4.9.37/hisilicon
-        # insert_mmz
-        # insmod hi_media.ko
-        # insmod hi3516a_base.ko
-        # insmod hi3516a_sys.ko vi_vpss_online=$b_arg_online sensor=unknown mem_total=$mem_total
-        # insert_isp
-        # insmod sensor_i2c.ko
-        # insmod sensor_spi.ko
-        # SENSOR=ar0230 insert_sns
-# }
-
-# remove_detect() {
-        # rmmod -w sensor_spi
-        # rmmod -w sensor_i2c
-        # rmmod -w hi3516a_isp
-        # rmmod -w hi3516a_sys
-        # rmmod -w hi3516a_base
-        # rmmod -w hi_media
-        # rmmod -w mmz
-        # rmmod -w sys_config
-# }
-
 insert_audio() {
         insmod acodec.ko
         insmod hi3516a_aio.ko
@@ -133,14 +106,6 @@ sys_config() {
 		devmem 0x201200E0 32 0xd					# internal codecЈ¬AIO MCLK out, CODEC AIO TX MCLK 
 		#devmem 0x201200E0 32 0xe				# external codec: AIC31/AK7756Ј¬AIO MCLK out, CODEC AIO TX MCLK 
 		
-}
-
-insert_isp() {
-        case $SENSOR in
-        *)
-                insmod hi3516a_isp.ko
-                ;;
-        esac
 }
 
 insert_sns() {
@@ -254,87 +219,176 @@ insert_sns() {
                 devmem 0x20030104 32 0x0     # Sensor 24M
                 ;;
         *)
-                echo "xxxx Invalid sensor type $SNS_TYPE xxxx"
+                echo "xxxx Invalid sensor type $SENSOR xxxx"
                 report_error
                 ;;
         esac
 
 }
-insert_ko() {
-        sys_config
+# insert_ko() {
+        # sys_config
 
-        insert_mmz
+        # insmod mmz.ko mmz=anonymous,0,$mmz_start,$mmz_size anony=1 || report_error
 
-        insmod hi_media.ko
-        insmod hi3516a_base.ko
+        # insmod hi_media.ko
+        # insmod hi3516a_base.ko
 
-        insmod hi3516a_sys.ko vi_vpss_online=$b_arg_online sensor=$SENSOR mem_total=$mem_total || report_error
+        # insmod hi3516a_sys.ko vi_vpss_online=$b_arg_online sensor=$SENSOR mem_total=$mem_total || report_error
 
-        insmod hi3516a_tde.ko
-        insmod hi3516a_region.ko
-        insmod hi3516a_vgs.ko
+        # insmod hi3516a_tde.ko
+        # insmod hi3516a_region.ko
+        # insmod hi3516a_vgs.ko
 
-        insert_isp
+        # insmod hi3516a_isp.ko
 
-        insmod hi3516a_viu.ko detect_err_frame=10
-        insmod hi3516a_vpss.ko rfr_frame_comp=1
-        insmod hi3516a_vou.ko
-        #insmod hi3516a_vou.ko transparentTransmit=1 #enable transparentTransmit
-        #insmod hifb.ko video="hifb:vram0_size:1620"     # default pal
+        # insmod hi3516a_viu.ko detect_err_frame=10
+        # insmod hi3516a_vpss.ko rfr_frame_comp=1
+        # insmod hi3516a_vou.ko
+        # #insmod hi3516a_vou.ko transparentTransmit=1 #enable transparentTransmit
+        # #insmod hifb.ko video="hifb:vram0_size:1620"     # default pal
 
-        insmod hi3516a_rc.ko
-        insmod hi3516a_venc.ko
-        insmod hi3516a_chnl.ko #ChnlLowPower=1
-        insmod hi3516a_h264e.ko H264eMiniBufMode=1
-        insmod hi3516a_h265e.ko H265eMiniBufMode=1
-        insmod hi3516a_jpege.ko
-        #insmod hi3516a_ive.ko save_power=0
-        #insmod hi3516a_ive.ko
+        # insmod hi3516a_rc.ko
+        # insmod hi3516a_venc.ko
+        # insmod hi3516a_chnl.ko #ChnlLowPower=1
+        # insmod hi3516a_h264e.ko H264eMiniBufMode=1
+        # insmod hi3516a_h265e.ko H265eMiniBufMode=1
+        # insmod hi3516a_jpege.ko
+        # #insmod hi3516a_ive.ko save_power=0
+        # #insmod hi3516a_ive.ko
 
-        insmod sensor_i2c.ko
-        insmod pwm.ko
-        #insmod piris.ko
+        # insmod sensor_i2c.ko
+        # insmod pwm.ko
+        # #insmod piris.ko
 
-        insert_sns
-        insert_audio
+        # insert_sns
+        # insert_audio
 
-        insmod hi_mipi.ko
-        insmod wdt.ko #nodeamon=1
-        echo "==== Your input Sensor type is $SENSOR ===="
+        # insmod hi_mipi.ko
+        # insmod wdt.ko #nodeamon=1
+        # echo "==== Your input Sensor type is $SENSOR ===="
+# }
+
+# remove_ko() {
+        # rmmod -w wdt
+        # remove_audio
+        # remove_sns
+
+        # rmmod -w pwm
+        # #rmmod -w piris
+        # #rmmod -w hi3516a_ive
+
+        # rmmod -w hi3516a_rc
+        # rmmod -w hi3516a_jpege
+        # rmmod -w hi3516a_h265e
+        # rmmod -w hi3516a_h264e
+        # rmmod -w hi3516a_chnl
+        # rmmod -w hi3516a_venc
+
+        # #rmmod -w hifb
+        # rmmod -w hi3516a_vou
+        # rmmod -w hi3516a_vpss
+        # rmmod -w hi3516a_viu
+        # rmmod -w hi_mipi
+
+        # rmmod -w hi3516a_vgs
+        # rmmod -w hi3516a_region
+        # rmmod -w hi3516a_tde
+
+        # rmmod -w hi3516a_isp
+        # rmmod -w hi3516a_sys
+        # rmmod -w hi3516a_base
+        # rmmod -w hi_media
+        # rmmod -w mmz
+# }
+
+insert_ko()
+{
+	# sys config
+	sys_config;
+ 
+	insmod mmz.ko mmz=anonymous,0,$mmz_start,$mmz_size anony=1 || report_error
+	insmod hi_media.ko
+	insmod hi3516a_base.ko
+	
+	insmod hi3516a_sys.ko vi_vpss_online=$b_arg_online sensor=$SENSOR
+
+	insmod hi3516a_tde.ko
+	insmod hi3516a_region.ko
+	insmod hi3516a_vgs.ko
+
+	insmod hi3516a_isp.ko
+	insmod hi3516a_viu.ko detect_err_frame=10;
+	insmod hi3516a_vpss.ko
+	insmod hi3516a_vou.ko #lowPowerMode=0
+	#insmod hi3516a_vou.ko detectCycle=0            #close dac detect
+	insmod hifb.ko video="hifb:vram0_size:1620"     # default pal
+
+	insmod hi3516a_rc.ko
+	insmod hi3516a_venc.ko
+	insmod hi3516a_chnl.ko
+	insmod hi3516a_h264e.ko
+	insmod hi3516a_h265e.ko
+	insmod hi3516a_jpege.ko
+	insmod hi3516a_vda.ko
+	insmod hi3516a_ive.ko
+
+	insmod sensor_i2c.ko
+	insmod pwm.ko
+	insmod piris.ko
+	#insmod adv_7441.ko
+	insmod sil9024.ko norm=12    #1080P@30fps
+
+	echo "==== Your input Sensor type is $SENSOR ===="
+	#insert_sns > /dev/null
+	insert_sns
+
+	insert_audio
+	echo "==== Your input Sensor type is $SENSOR ===="
+
+	insmod hi_mipi.ko
+	#insmod hi3516a_pm.ko
 }
 
-remove_ko() {
-        rmmod -w wdt
-        remove_audio
-        remove_sns
+remove_ko()
+{
+	#rmmod -w hi3516a_pm
+	remove_audio
+	remove_sns
 
-        rmmod -w pwm
-        #rmmod -w piris
-        #rmmod -w hi3516a_ive
+	rmmod -w sil9024 &> /dev/null
+	rmmod -w sil9034 &> /dev/null
+	rmmod -w pwm	
 
-        rmmod -w hi3516a_rc
-        rmmod -w hi3516a_jpege
-        rmmod -w hi3516a_h265e
-        rmmod -w hi3516a_h264e
-        rmmod -w hi3516a_chnl
-        rmmod -w hi3516a_venc
+	rmmod -w hi3516a_ive
+	rmmod -w hi3516a_vda
+	
+	rmmod -w hi3516a_rc
+	rmmod -w hi3516a_jpege
+	rmmod -w hi3516a_h264e
+	rmmod -w hi3516a_h265e
+	rmmod -w hi3516a_chnl
+	rmmod -w hi3516a_venc
 
-        #rmmod -w hifb
-        rmmod -w hi3516a_vou
-        rmmod -w hi3516a_vpss
-        rmmod -w hi3516a_viu
-        rmmod -w hi_mipi
+	rmmod -w hifb
+	rmmod -w hi3516a_vou
+	rmmod -w hi3516a_vpss
+	rmmod -w hi3516a_viu
+	rmmod -w hi_mipi
 
-        rmmod -w hi3516a_vgs
-        rmmod -w hi3516a_region
-        rmmod -w hi3516a_tde
+	rmmod -w ssp_ad9020
+	rmmod -w hi3516a_vgs
+	rmmod -w hi3516a_region
+	rmmod -w hi3516a_tde
 
-        rmmod -w hi3516a_isp
-        rmmod -w hi3516a_sys
-        rmmod -w hi3516a_base
-        rmmod -w hi_media
-        rmmod -w mmz
+	rmmod -w sensor_i2c
+	rmmod -w piris
+	rmmod -w hi3516a_isp
+	rmmod -w hi3516a_sys
+	rmmod -w hi3516a_base
+	rmmod -w hi_media
+	rmmod -w mmz
 }
+
 
 load_usage()
 {
@@ -437,46 +491,6 @@ fi
 calc_mmz_info
 
 #######################Action###############################
-
-# if [ $# -lt 1 ]; then
-        # load_usage
-        # exit 0
-# fi
-
-# # Sensor config
-# # SENSOR=${SENSOR:=imx307}
-# #
-
-# if [ -n "$SENSOR" ]; then
-        # logger -s -p daemon.info -t hisilicon "Manualy set SENSOR as ${SENSOR}"
-# else
-        # if fw_printenv -n sensor >/dev/null; then
-                # SENSOR_ENV=$(fw_printenv -n sensor)
-                # export SENSOR=${SENSOR_ENV}
-                # logger -s -p daemon.info -t hisilicon "Get data from environment and set SENSOR as ${SENSOR}"
-        # else
-                # insert_detect
-                # SENSOR_DETECT=$(ipcinfo --short-sensor)
-                # export SENSOR=${SENSOR_DETECT:=unknown}
-                # remove_detect
-                # logger -s -p daemon.info -t hisilicon "Get data from ipcinfo and set SENSOR as ${SENSOR}"
-                # fw_setenv sensor $SENSOR && logger -s -p daemon.info -t hisilicon "Write detected ${SENSOR} to U-Boot ENV"
-        # fi
-# fi
-
-# if [ $b_arg_remove -eq 1 ]; then
-        # remove_ko
-# fi
-
-# if [ "$SENSOR" = "unknown" ]; then
-        # exit 1
-# else
-        # if [ $b_arg_insmod -eq 1 ]; then
-                # cd /lib/modules/4.9.37/hisilicon
-                # insert_ko
-        # fi
-# fi
-
 
 if [ $# -lt 1 ]; then
     load_usage;
