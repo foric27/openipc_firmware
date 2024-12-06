@@ -232,8 +232,9 @@ insert_sns() {
         ov4689)
                 devmem 0x200f0050 32 0x2     # i2c0_scl
                 devmem 0x200f0054 32 0x2     # i2c0_sda
-                devmem 0x2003002c 32 0xE0007 # sensor unreset, clk 24MHz, VI 250MHz
-                devmem 0x20030104 32 0x0
+                #devmem 0x2003002c 32 0xE0007 # sensor unreset, clk 24MHz, VI 250MHz
+				devmem 0x2003002c 32 0x90007 # sensor unreset, clk 37.125MHz, VI 250MHz
+                devmem 0x20030104 32 0x0	 # VI 250MHz
                 ;;
         ar0230 | ar0237 | sc4236)
                 devmem 0x200f0050 32 0x2 # i2c0_scl
