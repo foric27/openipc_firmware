@@ -75,7 +75,7 @@ sys_config() {
 		#devmem 0x200300d8 32 0xa;           # ddrt
 
 		# -------------vi vpss online open
-		if [ $b_arg_online -eq 1 ]; then
+		if [ $b_arg_online -eq 0 ]; then
 			echo "==============vi_vpss_online==============";
 			devmem 0x20120004 32 0x40000000;			# online, SPI1 CS0
 			
@@ -321,7 +321,7 @@ insert_ko()
 	insmod hi3516a_vpss.ko
 	insmod hi3516a_vou.ko #lowPowerMode=0
 	#insmod hi3516a_vou.ko detectCycle=0            #close dac detect
-	insmod hifb.ko video="hifb:vram0_size:1620"     # default pal
+	#insmod hifb.ko video="hifb:vram0_size:1620"     # default pal
 
 	insmod hi3516a_rc.ko
 	insmod hi3516a_venc.ko
@@ -336,7 +336,7 @@ insert_ko()
 	insmod pwm.ko
 	insmod piris.ko
 	#insmod adv_7441.ko
-	insmod sil9024.ko norm=12    #1080P@30fps
+	#insmod sil9024.ko norm=12    #1080P@30fps
 
 	echo "==== Your input Sensor type is $SENSOR ===="
 	#insert_sns > /dev/null
